@@ -1,0 +1,13 @@
+{
+	"name": "@avn-vbw/base",
+	"type": "module",
+	"private": true,
+	"dependencies": {
+		"@nuxt/ui": "^4.11.2",
+		"@storyblok/nuxt": "^9.0.2",
+		"tailwindcss": "^4.1.18"
+	},
+	"devDependencies": {
+		"@types/node": "^26.6.2"
+	}
+}

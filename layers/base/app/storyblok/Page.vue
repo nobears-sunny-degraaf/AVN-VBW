@@ -1,13 +1,15 @@
-<script setup>
-defineProps({ blok: Object });
+<script setup lang="ts">
+import type { PageBlok } from "#base/types/blocks";
+
+defineProps<{ blok: PageBlok }>();
 </script>
 
 <template>
-	<main v-editable="blok">
+	<div v-editable="blok">
 		<StoryblokComponent
 			v-for="currentBlok in blok.body"
 			:key="currentBlok._uid"
 			:blok="currentBlok"
 		/>
-	</main>
+	</div>
 </template>

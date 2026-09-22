@@ -25,3 +25,5 @@ logs
 
 # Prettier
 .prettierrc
+# Local dev certificates
+.certs

@@ -1,78 +1,129 @@
+# AVN-VBW — Storyblok × Nuxt multi-site
 
-# Storyblok Core Space Blueprint: Nuxt
+A Nuxt 4 monorepo that serves multiple websites from one codebase and one Storyblok
+space. Blocks are shared through a base Nuxt Layer; a site that needs something
+different overrides that single file.
 
-Integrate [Nuxt](https://nuxt.com/) with [Storyblok](http://www.storyblok.com) as a headless CMS.
+```
+layers/base/      shared layer — blocks, composables, app shell, Nuxt UI, Storyblok
+sites/avn/        site app  ·  port 3000  ·  Storyblok folder avn/
+sites/vbw/        site app  ·  port 3001  ·  Storyblok folder vbw/
+```
 
-This blueprint is ideal for kickstarting new Storyblok and Next.js projects. What's inside:
-- Pre-configured default blocks: `page`, `teaser`, `grid`, and `feature`.
-- Support for the Visual Editor's live preview.
-- Dynamic routing to fetch and render new stories automatically.
-- Minimal styling.
+## Getting started
 
-> [!TIP]
-> Follow our [Nuxt guide](LINK) for a step-by-step walkthrough and learn more about Storyblok's range of features, including rich text rendering, custom content modeling, and internationalization. See the [@storyblok/nuxt package reference](https://storyblok.com/docs/packages/storyblok-nuxt) for further information.
-
-***
-
-[![Open in GitHub Codespaces](https://img.shields.io/badge/Open%20in%20GitHub%20Codespaces-dad4ff.svg?style=for-the-badge&logo=GitHub&logoColor=181717&labelColor=ffffff&color=dad4ff)](https://github.com/codespaces/new?skip_quickstart=true&machine=basicLinux32gb&repo=962644002&ref=main&geo=EuropeWest)
-[![Try Storyblok free](https://img.shields.io/badge/Try%20Storyblok-dad4ff.svg?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTQuNzA3IDIuNTM4aDIyLjUyOXYyMy41ODdINC43MDd6IiBzdHlsZT0iZmlsbDojZmZmIi8+PHBhdGggZmlsbD0iIzFmMWYxZiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMS43NDMgMi42MDFBMi41OTcgMi41OTcgMCAwIDEgNC4zMzUgMGgyMy4zM2EyLjU5NyAyLjU5NyAwIDAgMSAyLjU5MiAyLjYwMXYyMy40MTFhMi41OTcgMi41OTcgMCAwIDEtMi41OTIgMi42MDJIMTIuNTQ4bC0zLjg3MiAzLjIwOGEuNzcuNzcgMCAwIDEtMS4yNjEtLjU5N3YtMi42MTFoLTMuMDhhMi41OTcgMi41OTcgMCAwIDEtMi41OTItMi42MDJabTUuNjcgMi4xMjdoMTIuNDYyYzIuNjkxIDAgNC44NzMgMi4xOSA0Ljg3MyA0Ljg5IDAgMi4xNjQtMS40IDQtMy4zNDIgNC42NDRhNC44ODcgNC44ODcgMCAwIDEgMy45OSA0LjgxYzAgMi43MDEtMi4xODEgNC44OS00Ljg3MyA0Ljg5SDcuNDEzdi05LjQ1NFptMTAuMzY0IDQuNEgxMS45NXYyLjkzNGg1LjgyOGMuODA4IDAgMS40NjItLjY1NiAxLjQ2Mi0xLjQ2NyAwLS44MS0uNjU0LTEuNDY3LTEuNDYyLTEuNDY3em0tNS44MjggNi41Mmg2LjMxNGMuODk3IDAgMS42MjQuNzMgMS42MjQgMS42MyAwIC45MDEtLjcyNyAxLjYzLTEuNjI0IDEuNjNoLTYuMzE0eiIgY2xpcC1ydWxlPSJldmVub2RkIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjEuNTE3NzUiLz48L3N2Zz4K&labelColor=ffffff)](https://app.storyblok.com/#/signup)
-[![Join the Storyblok Discord community](https://img.shields.io/discord/700316478792138842?style=for-the-badge&logo=discord&label=Join%20our%20community&labelColor=ffffff&color=dad4ff)](https://storyblok.com/join-discord)
-
-## Get Started
-
-**No Storyblok account yet? [Sign up now](https://app.storyblok.com/#/signup?utm_source=docs) to experience a 14-day free trial of all features and enjoy our completely free Starter plan.**
-
-1. Create an empty new Storyblok space
-2. Create a new repository based on this template
-3. Open the project on your device
-4. Install dependencies
-
-```sh
+```bash
 npm install
+cp .env.example .env   # fill in STORYBLOK_DELIVERY_API_TOKEN
+npm run dev            # both sites at once
 ```
 
-### Authentication
+`npm run dev` starts both dev servers side by side with prefixed output, and
+stops both when you stop one. Use `npm run dev:avn` / `npm run dev:vbw` to run a
+single site.
 
-In the root of the project, create a `.env` file to store the access token of your space:
+Both sites read the same root `.env` (each app passes `--dotenv ../../.env`).
 
-```sh
-STORYBLOK_DELIVERY_API_TOKEN=<REPLACE_WITH_YOUR_TOKEN>
+### HTTPS certificates
+
+The Storyblok Visual Editor loads the site in an iframe, so localhost needs a
+certificate the browser actually trusts — an untrusted one fails silently in a
+frame, with no click-through interstitial. Nuxt's `devServer.https: true` only
+produces a self-signed certificate, so the repo uses mkcert instead:
+
+```bash
+brew install mkcert   # once
+npm run certs         # writes .certs/, gitignored
 ```
 
-> [!TIP]
-> Copy your space's preview access token from **Settings** > **Access Tokens**.
-> Learn more about Storyblok [access tokens](https://www.storyblok.com/docs/concepts/access-tokens).
+`layers/base/nuxt.config.ts` picks `.certs/` up automatically and warns on start
+if it is missing.
 
-### Connect the Visual Editor
+## How the scoping works
 
-To render a preview of the local project in the Visual Editor, follow these steps:
+Each site app declares which Storyblok folder it owns, and nothing else:
 
-1. In your space, navigate to **Settings > Visual Editor**.
-2. Set the default environment to `https://localhost:3000/`.
-3. Save.
-4. Open the `home` story.
-5. Click **Config**.
-6. Type `/` in the **Real path**.
-
-Run the development server:
-```sh
-npm run dev
+```ts
+// sites/avn/nuxt.config.ts
+runtimeConfig: { public: { site: { key: SiteKey.Avn, label: "AVN" } } }
 ```
 
-> [!IMPORTANT]
-> To connect the Storyblok Visual Editor, the local project must run over HTTPS. Learn more in the [Visual Editor concept](https://www.storyblok.com/docs/concepts/visual-editor#local-development-via-https). See the [Visual Preview part of the Nuxt guide](https://storyblok.com/docs/guides/nuxt/visual-preview) for detailed instructions.
+`useSiteStory()` in the base layer prefixes every request with that folder, so a
+site cannot address content outside it: `/` fetches `avn/`, `/over-ons` fetches
+`avn/over-ons`. `useSiteLink()` strips the prefix again when resolving Storyblok
+multilinks back to local routes.
 
-Back in Storyblok, open the **Home** story to start editing.
+## How overriding works
 
-Happy building!
+Blocks live in `layers/base/app/storyblok/` and are registered globally so
+Storyblok can resolve them by name. Each site declares its own block directory,
+and because the root app has a higher layer priority than the layers it extends,
+a file with the same name wins:
 
-## Resources
+| Block   | AVN                              | VBW                              |
+| ------- | -------------------------------- | -------------------------------- |
+| page    | base                             | base                             |
+| grid    | base                             | base                             |
+| teaser  | base                             | `sites/vbw/app/storyblok/`       |
+| feature | `sites/avn/app/storyblok/`       | base                             |
 
-- To learn more about what you can do with Storyblok, visit [our documentation and learning hub](https://www.storyblok.com/docs).
-- To learn more about the integration between Storyblok and Nuxt, check our [dedicated developer tutorials](https://www.storyblok.com/tutorials?technologies=nuxt).
-- To learn more about Nuxt, check the [official documentation](https://nuxt.com/docs).
+Colours are overridden the same way, through each site's `app/app.config.ts`.
 
-### Support
+## Adding a site
 
-- Have questions, need help, want to chat with other users? [Join our Discord community](https://storyblok.com/join-discord).
-- Visit the Storyblok [Help Center](https://support.storyblok.com/hc/en-us).
+1. Copy `sites/avn/` to `sites/<new>/`, change the port and the `site` key.
+2. Add the key to `SiteKey` in `layers/base/app/types/site.ts`.
+3. Create the matching folder in Storyblok with real path `/`.
+
+No blocks are duplicated. Drop the `components` line from the new site's config
+until it actually needs a block of its own.
+
+## Storyblok space
+
+Folder-per-site. Every story has an explicit real path.
+
+```
+avn/            folder
+  Home          /
+  Over ons      /over-ons
+  Navigation    /
+vbw/            folder
+  ...
+```
+
+Blocks: `page`, `teaser`, `grid`, `feature`, `navigation`, `nav_link`.
+
+### Visual Editor preview URLs
+
+Storyblok builds the preview URL by concatenating the environment URL with the
+story's **real path**, with no slash normalisation. So every story carries its own
+real path starting with `/` (`/`, `/over-ons`), and the environment URLs carry
+**no trailing slash**.
+
+Folder start pages are deliberately not used: the space option
+`clear_real_path_on_startpage` wipes a start page's real path, which makes it fall
+back to its full slug and produces `https://localhost:3001vbw/`.
+
+Set these once under **Settings → Visual Editor** (they cannot be set through the
+Management API):
+
+| Environment | URL                      |
+| ----------- | ------------------------ |
+| AVN         | `https://localhost:3000` |
+| VBW         | `https://localhost:3001` |
+
+No trailing slashes.
+
+Pick the matching environment in the editor when you open a story.
+
+## Scripts
+
+| Command                | What it does                        |
+| ---------------------- | ----------------------------------- |
+| `npm run dev`          | Both dev servers at once            |
+| `npm run dev:avn`      | AVN dev server on https://localhost:3000 |
+| `npm run dev:vbw`      | VBW dev server on https://localhost:3001 |
+| `npm run build:avn`    | Production build for AVN            |
+| `npm run build:vbw`    | Production build for VBW            |
+| `npm run typecheck`    | Typecheck every site                |
+| `npm run certs`        | Generate trusted localhost certificates |

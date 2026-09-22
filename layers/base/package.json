@@ -4,7 +4,7 @@
 	"private": true,
 	"dependencies": {
 		"@nuxt/ui": "^4.11.2",
-		"@storyblok/nuxt": "^9.0.2",
+		"@storyblok/nuxt": "^11.2.1",
 		"tailwindcss": "^4.1.18"
 	},
 	"devDependencies": {

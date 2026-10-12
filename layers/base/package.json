@@ -3,7 +3,7 @@
 	"type": "module",
 	"private": true,
 	"dependencies": {
-		"@nuxt/ui": "^4.11.2",
+		"@nuxt/ui": "^4.11.3",
 		"@storyblok/nuxt": "^9.0.2",
 		"tailwindcss": "^4.1.18"
 	},

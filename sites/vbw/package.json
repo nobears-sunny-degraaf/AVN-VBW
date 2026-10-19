@@ -12,8 +12,8 @@
 	},
 	"dependencies": {
 		"@avn-vbw/base": "*",
-		"nuxt": "^4.5.2",
-		"vue": "^3.5.43",
+		"nuxt": "^4.6.1",
+		"vue": "^3.5.44",
 		"vue-router": "^4.5.1"
 	},
 	"devDependencies": {
